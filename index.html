@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>项目体检 · 先停三分钟</title>
+<!-- 
+  部署说明（GitHub Pages）：
+  1. github.com/new 新建仓库（Public）
+  2. 上传本文件 index.html
+  3. Settings → Pages → Branch 选 main / root → Save
+  4. 访问 https://<用户名>.github.io/<仓库名>/
+-->
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2329; --muted:#6b7280;
+    --line:#e5e7eb; --brand:#2563eb; --brand-weak:#eff6ff;
+    --red:#dc2626; --red-weak:#fef2f2; --orange:#d97706; --orange-weak:#fffbeb;
+    --green:#059669; --green-weak:#ecfdf5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:16px 16px 48px}
+  .hero{text-align:center;padding:28px 8px 8px}
+  .hero h1{font-size:26px;letter-spacing:1px}
+  .hero .sub{color:var(--muted);font-size:14px;margin-top:6px}
+  .stopcard{background:linear-gradient(135deg,#fff7ed,#fef2f2);border:1px solid #fed7aa;
+    border-radius:14px;padding:14px 16px;margin:16px 0;font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+  .card h2{font-size:16px;margin-bottom:10px}
+  .tabs{display:flex;gap:8px;margin-bottom:10px}
+  .tab{flex:1;text-align:center;padding:8px 0;border-radius:8px;font-size:14px;
+    background:var(--bg);border:1px solid var(--line);cursor:pointer;user-select:none}
+  .tab.on{background:var(--brand-weak);border-color:var(--brand);color:var(--brand);font-weight:600}
+  textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:10px;
+    padding:12px;font-size:14px;resize:vertical;font-family:inherit;background:var(--bg)}
+  textarea:focus{outline:2px solid var(--brand-weak);border-color:var(--brand)}
+  input[type=text]{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;
+    font-size:15px;background:var(--bg)}
+  .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;
+    font-weight:600;cursor:pointer;margin-top:12px}
+  .btn-main{background:var(--brand);color:#fff}
+  .btn-main:active{opacity:.85}
+  .btn-ghost{background:var(--bg);color:var(--muted);border:1px solid var(--line);font-size:14px;padding:10px}
+  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+  .result{margin-top:4px}
+  .badge{display:inline-block;padding:3px 12px;border-radius:999px;font-size:13px;font-weight:600}
+  .lv-extreme{background:var(--red);color:#fff}
+  .lv-high{background:var(--red-weak);color:var(--red);border:1px solid #fecaca}
+  .lv-mid{background:var(--orange-weak);color:var(--orange);border:1px solid #fde68a}
+  .lv-low{background:var(--green-weak);color:var(--green);border:1px solid #a7f3d0}
+  .flag{border-left:3px solid var(--red);background:var(--red-weak);border-radius:0 8px 8px 0;
+    padding:10px 12px;margin:8px 0;font-size:14px}
+  .flag b{display:block;margin-bottom:2px}
+  .flag .why{color:#7f1d1d;font-size:13px}
+  .flag.soft{border-color:var(--orange);background:var(--orange-weak)}
+  .flag.soft .why{color:#78350f}
+  .searchlinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .searchlinks a{display:block;text-align:center;padding:10px 4px;border-radius:10px;font-size:14px;
+    background:var(--brand-weak);color:var(--brand);text-decoration:none;border:1px solid #dbeafe}
+  .ai-section{margin-top:12px}
+  .ai-note{font-size:13px;color:var(--muted)}
+  details{margin-top:10px}
+  summary{cursor:pointer;font-size:14px;color:var(--brand);font-weight:500}
+  .keyrow{display:flex;gap:8px;margin-top:8px}
+  .keyrow input{flex:1}
+  .advice li{margin:6px 0 6px 18px;font-size:14px}
+  .disclaimer{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);
+    padding-top:10px;margin-top:16px}
+  .footer{margin-top:24px;text-align:center;font-size:14px}
+  .footer .proj{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+  .footer .proj b{font-size:15px}
+  .footer .proj p{font-size:13px;color:var(--muted);margin-top:4px}
+  .wx{display:inline-block;margin-top:8px;background:var(--brand-weak);color:var(--brand);
+    padding:8px 16px;border-radius:10px;font-weight:600;text-decoration:none}
+  .hidden{display:none}
+  .loading{display:none;text-align:center;color:var(--muted);padding:20px;font-size:14px}
+  .spinner{display:inline-block;width:22px;height:22px;border:3px solid var(--line);
+    border-top-color:var(--brand);border-radius:50%;animation:sp 0.8s linear infinite;vertical-align:-5px;margin-right:8px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>🛡️ 项目体检</h1>
+    <div class="sub">把招商话术 / 合同 / 公司名贴进来，看看别人踩过的坑</div>
+  </div>
+
+  <div class="stopcard">
+    ⏸️ <b>先停三分钟。</b>如果你正被「名额有限」「最后一天」催着交钱——那更要停。
+    急着成交的人，最怕你冷静。这里不卖任何项目，只帮你核对证据。
+  </div>
+
+  <div class="card">
+    <h2>① 输入要检查的内容</h2>
+    <div class="tabs">
+      <div class="tab on" data-t="text">📋 粘贴文本</div>
+      <div class="tab" data-t="pdf">📄 上传 PDF</div>
+      <div class="tab" data-t="company">🏢 查公司</div>
+    </div>
+
+    <div id="pane-text">
+      <textarea id="inputText" placeholder="把对方发你的招商话术、项目介绍、合同条款原样粘贴到这里…&#10;&#10;越完整越准：包括收费方式、分成比例、承诺的收益等。"></textarea>
+    </div>
+
+    <div id="pane-pdf" class="hidden">
+      <input type="file" id="pdfFile" accept=".pdf">
+      <div class="hint">PDF 会在你手机本地解析，内容不上传到任何服务器。</div>
+      <textarea id="pdfText" class="hidden" style="margin-top:10px"></textarea>
+    </div>
+
+    <div id="pane-company" class="hidden">
+      <input type="text" id="companyName" placeholder="输入公司全名，如：XX市XX网络服务有限公司">
+    </div>
+
+    <button class="btn btn-main" id="btnAnalyze">🔍 开始体检</button>
+    <div class="hint">分析在你设备本地完成，文本不会被上传。三个标签页里<b>已填写的内容会一起参与分析</b>。</div>
+  </div>
+
+  <div class="loading" id="loading"><span class="spinner"></span>正在分析…</div>
+
+  <div id="result" class="result hidden">
+    <div class="card">
+      <h2>② 体检结果 <span id="riskBadge" class="badge"></span></h2>
+      <div id="scoreLine" style="font-size:13px;color:var(--muted);margin-bottom:8px"></div>
+      <div id="flags"></div>
+      <div id="noFlag" class="hidden" style="font-size:14px;color:var(--green)">
+        ✅ 未命中已知风险信号。但注意：没有红旗 ≠ 安全，请继续用下面的渠道核实公司资质与投诉记录。
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>③ 全网核实（点击直达）</h2>
+      <div id="companyLinks">
+        <div id="companyTarget" style="font-size:14px;margin-bottom:6px"></div>
+        <div class="searchlinks" id="linkGrid"></div>
+      </div>
+      <div class="hint" id="companyHint" style="margin-top:8px">
+        💡 没填公司名？把对方聊天里提到的公司名填到「查公司」标签页再跑一次，核实更完整。
+      </div>
+    </div>
+
+    <div class="card ai-section">
+      <h2>④ 大模型深度分析（可选）</h2>
+      <div class="ai-note">填入你自己的 DeepSeek API Key 即可解锁深度分析。Key 只存在你手机浏览器里，分析请求由你的设备直接发往 DeepSeek，不经过本站。</div>
+      <details>
+        <summary>🔑 设置 DeepSeek Key</summary>
+        <div class="keyrow">
+          <input type="text" id="dsKey" placeholder="sk-...">
+          <button class="btn btn-ghost" id="btnSaveKey" style="margin-top:0;width:auto">保存</button>
+        </div>
+        <div class="hint">获取 Key：<a href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a>（费用由 DeepSeek 向你收取，与本站无关）</div>
+      </details>
+      <button class="btn btn-main" id="btnAI" style="background:#0f172a">🤖 跑深度分析</button>
+      <div id="aiResult" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h2>⑤ 现在该做什么</h2>
+      <ul class="advice">
+        <li><b>不转任何钱</b>：定金、搭建费、审核费，任何名目都不转。</li>
+        <li><b>不签电子合同</b>：签了再想退，难上加难。</li>
+        <li><b>保留证据</b>：聊天记录、转账记录（重点看收款方是公司还是个人）、对方微信号。</li>
+        <li><b>官方核实</b>：企查查看经营范围与风险；黑猫/消费保搜投诉；有损失直接 12315 或报警。</li>
+        <li><b>越催越撤</b>：对方越是「限时优惠、名额将满」，越说明有问题。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="proj">
+      <b>想找真正靠谱的事做？我们在做的：</b>
+      <p>以下是我们自己开发的产品，感兴趣的可以加微信了解，不感兴趣忽略即可：</p>
+      <p style="margin-top:6px">🐴 <b>小马1号</b> — 本地 AI Agent 枢纽　|　📸 <b>签子计数</b> — AI 视觉识别计数小程序</p>
+      <a class="wx" id="wxLink" href="#">💬 微信联系我（核实项目 / 交流）</a>
+    </div>
+    <div class="disclaimer">
+      ⚠️ 免责声明：本工具为 AI 辅助分析，结果仅供参考，<b>不构成法律意见或司法认定</b>。
+      风险信号基于公开案例与法规整理，未命中不代表安全。涉及资金决策请自行核实并咨询专业人士。
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+// ======== 配置区（部署前改这里） ========
+var CONFIG = {
+  wechatId: "YOUR_WECHAT_ID",          // ← 把你的微信号填在这里
+  goatcounterSite: ""                  // ← 轻量统计（可选）：注册 goatcounter.com 后填 "https://你的站.goatcounter.com/count"
+};
+// =======================================
+
+// ===ENGINE-BEGIN===
+var RULES = [
+  {id:"entry_fee", name:"收费门槛（入门费特征）", weight:18,
+   re:/搭建费|加盟费|代理费|入驻费|开通费|合作费|技术费|保证金|激活费|门槛费/g,
+   why:"正规生意靠卖产品赚钱，靠收下家入门费赚钱的模式，符合《禁止传销条例》第七条的「入门费」特征。"},
+  {id:"pyramid", name:"分成拉人（拉人头特征）", weight:15,
+   re:/五五分|分成比例|拉人头|发展下线|团队计酬|层级奖励|推荐奖励|招募合伙人|城市合伙人|裂变返佣/g,
+   why:"收入若主要来自发展下线而非真实销售，涉嫌违反《禁止传销条例》；层级达三级且三十人以上可追究刑责。"},
+  {id:"guaranteed", name:"躺赚承诺（夸大宣传）", weight:15,
+   re:/躺赚|稳赚|保本|零风险|被动收入|月入[过破几十上]?[0-9一二三五千万元]+|日入[过破几十上]?[0-9一二三百千万元]+|复制.{0,6}出结果|跟着做.{0,6}赚/g,
+   why:"承诺确定收益属虚假宣传。真赚钱的法子没人会批量售卖——卖的只能是让你交钱这件事。"},
+  {id:"emotion", name:"情感服务无资质", weight:12,
+   re:/情感挽回|挽回爱情|复合大师|和合术|情感导师|情感咨询|情感分析/g,
+   why:"情感挽回是监管重点整治领域，多地已判诈骗案（套路：承诺见效→层层加价→失联）。无心理咨询资质开展此类服务涉嫌无证经营。"},
+  {id:"urgency", name:"限时催单", weight:10,
+   re:/名额有限|限时|仅限今天|最后[0-9一二三几]?个?名额|马上涨价|过时不候|今天.{0,4}特惠|错过再等/g,
+   why:"制造稀缺催你冲动决策是标准销售套路。真机会不怕你回去想三天。"},
+  {id:"personal_account", name:"收款进个人账户", weight:15,
+   re:/个人账户|私人账户|微信转账|扫码支付?给|转给我|直接转账|私下收款/g,
+   why:"合同签公司、钱进个人账户，是虚假宣传与合同欺诈案件的高发特征，维权时责任主体难以认定。"},
+  {id:"income_ratio", name:"高收益暗示（请人工确认语境）", weight:8, soft:true,
+   re:/收益率|回报率|[0-9]+\s*%|翻[0-9几]+倍/g,
+   why:"出现收益率数字不一定违规，但招商话术中出现此类数字多为夸大收益暗示。"},
+  {id:"vague_delivery", name:"交付描述模糊", weight:5, soft:true,
+   re:/一站式|全权负责|保姆级|全程扶持|无忧|托底/g,
+   why:"承诺宏大但无具体交付标准的，实际交付往往缩水——已有投诉案例为「承诺小程序，实际只给一个域名」。"},
+  {id:"secrecy", name:"要求保密/不披露", weight:6,
+   re:/保密.{0,8}不(能|便|予)(透露|告知|披露)|不方便透露|内部模式/g,
+   why:"以保密为由拒绝披露服务内容和运营细节，正规公司无需如此。"},
+  {id:"no_invoice", name:"涉税务违规信号", weight:6,
+   re:/不开发票|无法开票|不提供发票|私人收款/g,
+   why:"经营性收款不开发票涉嫌偷税漏税，可向税务机关举报，也是判断对方正规程度的重要信号。"},
+  {id:"refund_hard", name:"退款困难条款", weight:8,
+   re:/费用.{0,6}(不|予)退|概不退款|一经开通.{0,6}不退|最终解释权/g,
+   why:"概不退款、最终解释权归本方属霸王条款，依《消费者权益保护法》第二十六条无效，但会大幅增加维权成本。"}
+];
+
+function runRuleEngine(text){
+  var t = (text || "").replace(/\s+/g, "");
+  var hits = [], score = 0;
+  for (var i = 0; i < RULES.length; i++){
+    var r = RULES[i];
+    var m = t.match(r.re);
+    if (m && m.length){
+      score += r.weight;
+      var uniq = [];
+      m.forEach(function(x){ if (uniq.indexOf(x) < 0) uniq.push(x); });
+      hits.push({name: r.name, weight: r.weight, matched: uniq.slice(0, 5), why: r.why, soft: !!r.soft});
+    }
+  }
+  var level, lvClass;
+  if (score >= 45){ level = "极高风险"; lvClass = "lv-extreme"; }
+  else if (score >= 30){ level = "高风险"; lvClass = "lv-high"; }
+  else if (score >= 15){ level = "中风险"; lvClass = "lv-mid"; }
+  else if (score > 0){ level = "低风险"; lvClass = "lv-low"; }
+  else { level = "未见明显红旗"; lvClass = "lv-low"; }
+  var company = (text || "").match(/[\u4e00-\u9fa5]{2,20}(?:有限公司|股份公司|集团公司|商行|工作室)/);
+  return {score: score, level: level, lvClass: lvClass, hits: hits, company: company ? company[0] : null};
+}
+// ===ENGINE-END===
+
+var SEARCH_SITES = [
+  {name:"黑猫投诉", url:function(q){return "https://tousu.sina.com.cn/index/search/?keywords=" + encodeURIComponent(q) + "&t=1";}},
+  {name:"消费保", url:function(q){return "https://www.315.com/search?keyword=" + encodeURIComponent(q);}},
+  {name:"企查查", url:function(q){return "https://www.qcc.com/web/search?key=" + encodeURIComponent(q);}},
+  {name:"爱企查", url:function(q){return "https://aiqicha.baidu.com/s?q=" + encodeURIComponent(q);}},
+  {name:"天眼查", url:function(q){return "https://www.tianyancha.com/search?key=" + encodeURIComponent(q);}},
+  {name:"必应搜索", url:function(q){return "https://www.bing.com/search?q=" + encodeURIComponent(q + " 投诉 诈骗 骗局");}}
+];
+
+// ---------- UI 逻辑 ----------
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  // 微信
+  if (CONFIG.wechatId && CONFIG.wechatId !== "YOUR_WECHAT_ID"){
+    $("wxLink").textContent = "💬 微信：" + CONFIG.wechatId + "（添加时备注：项目体检）";
+  } else {
+    $("wxLink").textContent = "💬 微信联系（部署时在 CONFIG 中填入微信号）";
+  }
+
+  // 轻量统计（可选）
+  if (CONFIG.goatcounterSite){
+    var s = document.createElement("script");
+    s.async = 1;
+    s.src = CONFIG.goatcounterSite.replace(/\/count$/, "/count.v2.js");
+    s.setAttribute("data-goatcounter", CONFIG.goatcounterSite);
+    document.body.appendChild(s);
+  }
+
+  // Tab 切换
+  var tabs = document.querySelectorAll(".tab");
+  tabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      tabs.forEach(function(t){ t.classList.remove("on"); });
+      tab.classList.add("on");
+      var t = tab.getAttribute("data-t");
+      $("pane-text").classList.toggle("hidden", t !== "text");
+      $("pane-pdf").classList.toggle("hidden", t !== "pdf");
+      $("pane-company").classList.toggle("hidden", t !== "company");
+    });
+  });
+
+  // PDF 解析（本地，不上传）
+  if (window.pdfjsLib){
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  }
+  $("pdfFile").addEventListener("change", function(e){
+    var f = e.target.files[0];
+    if (!f) return;
+    if (!window.pdfjsLib){
+      alert("PDF 组件加载失败（网络原因），请把 PDF 里的文字复制后改用「粘贴文本」。");
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(){
+      pdfjsLib.getDocument({data: reader.result}).promise.then(function(doc){
+        var pages = [], done = 0;
+        for (var i = 1; i <= doc.numPages; i++){
+          doc.getPage(i).then(function(pg){
+            pg.getTextContent().then(function(tc){
+              pages[pg.pageNumber - 1] = tc.items.map(function(it){ return it.str; }).join("");
+              done++;
+              if (done === doc.numPages){
+                $("pdfText").classList.remove("hidden");
+                $("pdfText").value = pages.join("\n");
+              }
+            });
+          });
+        }
+      }).catch(function(){
+        alert("这个 PDF 无法提取文字（可能是扫描图片版），请手动复制内容粘贴。");
+      });
+    };
+    reader.readAsArrayBuffer(f);
+  });
+
+  function getText(){
+    var t = $("inputText").value.trim();
+    if (!t && !$("pdfText").classList.contains("hidden")) t = $("pdfText").value.trim();
+    return t;
+  }
+
+  // 合并所有已填内容：粘贴文本 + 已解析的 PDF 文字 + 公司名，一起分析
+  function allInput(){
+    var parts = [];
+    var t = $("inputText").value.trim();
+    if (t) parts.push(t);
+    if (!$("pdfText").classList.contains("hidden")){
+      var p = $("pdfText").value.trim();
+      if (p) parts.push(p);
+    }
+    var c = $("companyName").value.trim();
+    if (c) parts.push(c);
+    return { text: parts.join("\n"), company: c };
+  }
+
+  function searchLinks(q){
+    $("linkGrid").innerHTML = SEARCH_SITES.map(function(s){
+      return '<a href="' + s.url(q) + '" target="_blank" rel="noopener">' + s.name + ' ↗</a>';
+    }).join("");
+  }
+
+  // 规则分析（文本 / PDF / 公司名 三者合并，全部一起分析）
+  $("btnAnalyze").addEventListener("click", function(){
+    var inp = allInput();
+    if (!inp.text){ alert("请先粘贴内容、上传 PDF 或填写公司名。"); return; }
+
+    $("loading").style.display = "block";
+    setTimeout(function(){
+      var r = runRuleEngine(inp.text);
+      r.company = inp.company || r.company;   // 手动填的公司名优先用于检索
+      render(r);
+      $("loading").style.display = "none";
+      $("result").classList.remove("hidden");
+      $("result").scrollIntoView({behavior: "smooth"});
+    }, 150);
+  });
+
+  function render(r){
+    var b = $("riskBadge");
+    b.textContent = r.level + (r.score ? "（" + r.score + " 分）" : "");
+    b.className = "badge " + r.lvClass;
+    $("scoreLine").textContent = r.company ? ("检测到公司名：" + r.company) : "未识别到公司名";
+
+    var f = $("flags");
+    f.innerHTML = "";
+    var hard = r.hits.filter(function(h){ return !h.soft; });
+    var soft = r.hits.filter(function(h){ return h.soft; });
+    hard.sort(function(a, b){ return b.weight - a.weight; });
+    soft.sort(function(a, b){ return b.weight - a.weight; });
+    hard.concat(soft).forEach(function(h){
+      var d = document.createElement("div");
+      d.className = "flag" + (h.soft ? " soft" : "");
+      d.innerHTML = "<b>" + h.name + "（+" + h.weight + "）</b>" +
+        "<span style='font-size:12px;color:var(--muted)'>命中：" +
+        h.matched.map(function(x){ return "「" + x + "」"; }).join(" ") + "</span>" +
+        "<div class='why'>" + h.why + "</div>";
+      f.appendChild(d);
+    });
+    $("noFlag").classList.toggle("hidden", r.hits.length > 0);
+
+    var q = r.company || "";
+    if (q){
+      $("companyTarget").innerHTML = "针对 <b>" + q + "</b> 的公开记录：";
+      $("companyHint").classList.add("hidden");
+    } else {
+      $("companyTarget").textContent = "";
+      $("companyHint").classList.remove("hidden");
+    }
+    searchLinks(q || "创业者 防骗 招商加盟 避坑");
+  }
+
+  // DeepSeek BYOK
+  var key = $("dsKey");
+  key.value = localStorage.getItem("ds_key") || "";
+  $("btnSaveKey").addEventListener("click", function(){
+    localStorage.setItem("ds_key", key.value.trim());
+    alert("Key 已保存到本机浏览器。");
+  });
+
+  $("btnAI").addEventListener("click", function(){
+    var k = key.value.trim();
+    var text = allInput().text;
+    if (!k){ alert("请先点开「设置 DeepSeek Key」填入你的 Key。"); return; }
+    if (!text){ alert("请先输入要分析的内容。"); return; }
+
+    var box = $("aiResult");
+    box.innerHTML = '<div style="color:var(--muted);font-size:14px"><span class="spinner"></span>DeepSeek 分析中…（请求由你的设备直发 DeepSeek）</div>';
+
+    var ruleOut = runRuleEngine(text);
+    var prompt = "你是一名反诈分析助手。以下是某招商/加盟/副业项目的宣传内容或合同片段，请结合公开案例常识分析。\n" +
+      "规则引擎初步命中信号：" + (ruleOut.hits.map(function(h){ return h.name; }).join("、") || "无") + "\n\n" +
+      "【待分析内容】\n" + text.slice(0, 6000) + "\n\n" +
+      "请只输出 JSON（不要 markdown 代码块），格式：" +
+      '{"summary":"两句话总结这是什么模式","risk_level":"高|中|低","red_flags":[{"point":"红旗点","why":"为什么危险"}],"contradictions":["内容中自相矛盾或与常识矛盾之处"],"questions":["签约前应逼问对方的问题"]}';
+
+    fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + k},
+      body: JSON.stringify({model: "deepseek-chat", messages: [{role: "user", content: prompt}], temperature: 0.3})
+    }).then(function(res){
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).then(function(data){
+      var c = data.choices[0].message.content.replace(/```json|```/g, "").trim();
+      var j = JSON.parse(c);
+      box.innerHTML =
+        '<div style="font-size:14px"><b>模式总结：</b>' + esc(j.summary) + "</div>" +
+        '<div style="font-size:14px;margin-top:6px"><b>风险级别：</b>' + esc(j.risk_level) + "</div>" +
+        (j.red_flags || []).map(function(x){
+          return '<div class="flag"><b>' + esc(x.point) + '</b><div class="why">' + esc(x.why) + "</div></div>";
+        }).join("") +
+        ((j.contradictions && j.contradictions.length) ?
+          '<div style="font-size:14px;margin-top:8px"><b>⚠️ 矛盾点：</b><ul class="advice">' +
+          j.contradictions.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" : "") +
+        ((j.questions && j.questions.length) ?
+          '<div style="font-size:14px;margin-top:8px"><b>❓ 签约前逼问对方：</b><ul class="advice">' +
+          j.questions.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" : "") +
+        '<div class="disclaimer">以上为 AI 生成内容，可能存在错误，不构成法律意见。</div>';
+    }).catch(function(err){
+      box.innerHTML = '<div style="font-size:14px;color:var(--red)">调用失败：' + esc(String(err)) +
+        '<br>常见原因：Key 无效 / 余额不足 / 浏览器或网络拦截了跨域请求（可换系统浏览器试试）。</div>';
+    });
+  });
+
+  function esc(s){ var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+})();
+</script>
+</body>
+</html>
