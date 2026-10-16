@@ -120,6 +120,18 @@
     <div class="hint">分析在你设备本地完成，文本不会被上传。三个标签页里<b>已填写的内容会一起参与分析</b>。</div>
   </div>
 
+  <div class="card ai-section">
+    <h2>大模型深度分析（可选）</h2>
+    <div class="ai-note">填入你自己的 DeepSeek API Key 即可解锁深度分析。Key 只存在你手机浏览器里，分析请求由你的设备直接发往 DeepSeek，不经过本站。</div>
+    <div class="keyrow">
+      <input type="text" id="dsKey" placeholder="sk-...">
+      <button class="btn btn-ghost" id="btnSaveKey" style="margin-top:0;width:auto">保存</button>
+    </div>
+    <div class="hint">获取 Key：<a href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a>（费用由 DeepSeek 向你收取，与本站无关）</div>
+    <button class="btn btn-main" id="btnAI" style="background:#0f172a">🤖 跑深度分析</button>
+    <div id="aiResult" style="margin-top:10px"></div>
+  </div>
+
   <div class="loading" id="loading"><span class="spinner"></span>正在分析…</div>
 
   <div id="result" class="result hidden">
@@ -143,23 +155,10 @@
       </div>
     </div>
 
-    <div class="card ai-section">
-      <h2>④ 大模型深度分析（可选）</h2>
-      <div class="ai-note">填入你自己的 DeepSeek API Key 即可解锁深度分析。Key 只存在你手机浏览器里，分析请求由你的设备直接发往 DeepSeek，不经过本站。</div>
-      <details>
-        <summary>🔑 设置 DeepSeek Key</summary>
-        <div class="keyrow">
-          <input type="text" id="dsKey" placeholder="sk-...">
-          <button class="btn btn-ghost" id="btnSaveKey" style="margin-top:0;width:auto">保存</button>
-        </div>
-        <div class="hint">获取 Key：<a href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a>（费用由 DeepSeek 向你收取，与本站无关）</div>
-      </details>
-      <button class="btn btn-main" id="btnAI" style="background:#0f172a">🤖 跑深度分析</button>
-      <div id="aiResult" style="margin-top:10px"></div>
-    </div>
+    <!-- 深度分析卡已提到输入区下方常驻 -->
 
     <div class="card">
-      <h2>⑤ 现在该做什么</h2>
+      <h2>④ 现在该做什么</h2>
       <ul class="advice">
         <li><b>不转任何钱</b>：定金、搭建费、审核费，任何名目都不转。</li>
         <li><b>不签电子合同</b>：签了再想退，难上加难。</li>
