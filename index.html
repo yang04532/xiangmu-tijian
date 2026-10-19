@@ -59,21 +59,25 @@
   .searchlinks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
   .searchlinks a{display:block;text-align:center;padding:10px 4px;border-radius:10px;font-size:14px;
     background:var(--brand-weak);color:var(--brand);text-decoration:none;border:1px solid #dbeafe}
-  .ai-section{margin-top:12px}
-  .ai-note{font-size:13px;color:var(--muted)}
-  details{margin-top:10px}
-  summary{cursor:pointer;font-size:14px;color:var(--brand);font-weight:500}
-  .keyrow{display:flex;gap:8px;margin-top:8px}
-  .keyrow input{flex:1}
   .advice li{margin:6px 0 6px 18px;font-size:14px}
   .disclaimer{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);
     padding-top:10px;margin-top:16px}
   .footer{margin-top:24px;text-align:center;font-size:14px}
-  .footer .proj{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
-  .footer .proj b{font-size:15px}
-  .footer .proj p{font-size:13px;color:var(--muted);margin-top:4px}
-  .wx{display:inline-block;margin-top:8px;background:var(--brand-weak);color:var(--brand);
-    padding:8px 16px;border-radius:10px;font-weight:600;text-decoration:none}
+  .opc{background:#0b1626;border:1px solid #1e3a5f;border-radius:14px;padding:16px;margin:10px 0;color:#e8f1fb}
+  .opc h3{font-size:17px;color:#fff;letter-spacing:1px}
+  .opc-sub{color:#4cc3f7;font-size:13px;margin-top:4px}
+  .opc-lead{font-size:13px;color:#cfe3f7;margin-top:10px}
+  .opc-chips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+  .opc-chips .chip{border:1px solid #2a5a8a;border-radius:10px;padding:8px 4px;text-align:center}
+  .opc-chips .chip b{display:block;color:#4cc3f7;font-size:15px}
+  .opc-chips .chip span{font-size:11px;color:#9fb8d4}
+  .opc-where{margin-top:12px;font-size:13px;color:#cfe3f7}
+  .opc-cta{display:inline-block;margin-top:10px;background:#4cc3f7;color:#06263e;
+    padding:10px 18px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px}
+  .opc-note{margin-top:10px;font-size:12px;color:#7f9bbd}
+  .hook-note{font-size:13px;color:var(--muted);margin-bottom:8px}
+  .hook-list{margin:8px 0 4px 18px;font-size:13px}
+  .hook-list li{margin:4px 0}
   .hidden{display:none}
   .loading{display:none;text-align:center;color:var(--muted);padding:20px;font-size:14px}
   .spinner{display:inline-block;width:22px;height:22px;border:3px solid var(--line);
@@ -120,18 +124,6 @@
     <div class="hint">分析在你设备本地完成，文本不会被上传。三个标签页里<b>已填写的内容会一起参与分析</b>。</div>
   </div>
 
-  <div class="card ai-section">
-    <h2>大模型深度分析（可选）</h2>
-    <div class="ai-note">填入你自己的 DeepSeek API Key 即可解锁深度分析。Key 只存在你手机浏览器里，分析请求由你的设备直接发往 DeepSeek，不经过本站。</div>
-    <div class="keyrow">
-      <input type="text" id="dsKey" placeholder="sk-...">
-      <button class="btn btn-ghost" id="btnSaveKey" style="margin-top:0;width:auto">保存</button>
-    </div>
-    <div class="hint">获取 Key：<a href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a>（费用由 DeepSeek 向你收取，与本站无关）</div>
-    <button class="btn btn-main" id="btnAI" style="background:#0f172a">🤖 跑深度分析</button>
-    <div id="aiResult" style="margin-top:10px"></div>
-  </div>
-
   <div class="loading" id="loading"><span class="spinner"></span>正在分析…</div>
 
   <div id="result" class="result hidden">
@@ -155,10 +147,13 @@
       </div>
     </div>
 
-    <!-- 深度分析卡已提到输入区下方常驻 -->
+    <div class="card">
+      <h2>④ 联网搜索相关结果 <span id="webStatus" style="font-size:12px;color:var(--muted);font-weight:400"></span></h2>
+      <div id="webResults"><div class="hint">发起体检后，自动联网搜索该公司/项目的投诉与风险信息。</div></div>
+    </div>
 
     <div class="card">
-      <h2>④ 现在该做什么</h2>
+      <h2>⑤ 现在该做什么</h2>
       <ul class="advice">
         <li><b>不转任何钱</b>：定金、搭建费、审核费，任何名目都不转。</li>
         <li><b>不签电子合同</b>：签了再想退，难上加难。</li>
@@ -167,14 +162,34 @@
         <li><b>越催越撤</b>：对方越是「限时优惠、名额将满」，越说明有问题。</li>
       </ul>
     </div>
+
+    <div class="card hook-report">
+      <h2>📑 想要完整深度报告？加微信领</h2>
+      <p class="hook-note">免费体检只是第一步。把「证据链 + 风险结论 + 维权路径 + 相似案例」整理成一份可转发、可投诉、可咨询律师的完整报告——加微信我发你。</p>
+      <ul class="hook-list">
+        <li>✅ 风险信号逐条证据链（截图 + 出处）</li>
+        <li>✅ 风险等级结论与法律依据</li>
+        <li>✅ 下一步维权路径（12315 / 报警 / 投诉模板）</li>
+        <li>✅ 相似真实案例与避坑清单</li>
+      </ul>
+      <a class="btn btn-main" id="reportCta" href="#">💬 加微信，领取完整深度报告</a>
+      <div class="hint">添加时备注「深度报告」，整理好发你。</div>
+    </div>
   </div>
 
   <div class="footer">
-    <div class="proj">
-      <b>想找真正靠谱的事做？我们在做的：</b>
-      <p>以下是我们自己开发的产品，感兴趣的可以加微信了解，不感兴趣忽略即可：</p>
-      <p style="margin-top:6px">🐴 <b>小马1号</b> — 本地 AI Agent 枢纽　|　📸 <b>签子计数</b> — AI 视觉识别计数小程序</p>
-      <a class="wx" id="wxLink" href="#">💬 微信联系我（核实项目 / 交流）</a>
+    <div class="opc">
+      <h3>OPC 创业社区 · 开放交流日</h3>
+      <div class="opc-sub">AI 赋能个体 · 共建资源协作型创业社区</div>
+      <p class="opc-lead">查完发现这项目不靠谱？别灰心——每周五来 OPC，看看靠谱的怎么干：</p>
+      <div class="opc-chips">
+        <div class="chip"><b>免租</b><span>拎包入驻 · 3 个月起</span></div>
+        <div class="chip"><b>6 折</b><span>AI 算力 · Token 可返佣</span></div>
+        <div class="chip"><b>资源</b><span>项目撮合 · 信息互通</span></div>
+      </div>
+      <div class="opc-where">📍 深圳市宝安区宝民一路 284 号 · 北方汽车大厦 4 楼 3A66　🕓 每周五 下午 4:00</div>
+      <a class="opc-cta" id="opcCta" href="#">扫码报名，锁定席位</a>
+      <div class="opc-note">🚇 近地铁上川站 · 适合：AI 短视频 · GEO 推广 · Vibe Coding · 电商/外贸 SOHO · 自由创业者</div>
     </div>
     <div class="disclaimer">
       ⚠️ 免责声明：本工具为 AI 辅助分析，结果仅供参考，<b>不构成法律意见或司法认定</b>。
@@ -187,8 +202,9 @@
 <script>
 // ======== 配置区（部署前改这里） ========
 var CONFIG = {
-  wechatId: "YOUR_WECHAT_ID",          // ← 把你的微信号填在这里
-  goatcounterSite: ""                  // ← 轻量统计（可选）：注册 goatcounter.com 后填 "https://你的站.goatcounter.com/count"
+  wechatId: "yang-4532",               // ← 微信号，已填入（结果页领报告 / 页脚 OPC 报名共用）
+  goatcounterSite: "",                 // ← 轻量统计（可选）：注册 goatcounter.com 后填 "https://你的站.goatcounter.com/count"
+  proxyUrl: "https://doubao-search-proxy.app.workbuddy.host"  // 豆包搜索转发代理（Key 在服务端，不下发页面）
 };
 // =======================================
 
@@ -254,23 +270,47 @@ function runRuleEngine(text){
 // ===ENGINE-END===
 
 var SEARCH_SITES = [
-  {name:"黑猫投诉", url:function(q){return "https://tousu.sina.com.cn/index/search/?keywords=" + encodeURIComponent(q) + "&t=1";}},
+  {name:"百度搜投诉", url:function(q){return "https://www.baidu.com/s?wd=" + encodeURIComponent(q + " 投诉 骗局");}},
+  {name:"必应搜投诉", url:function(q){return "https://cn.bing.com/search?q=" + encodeURIComponent(q + " 投诉 骗局");}},
   {name:"消费保", url:function(q){return "https://www.315.com/search?keyword=" + encodeURIComponent(q);}},
-  {name:"企查查", url:function(q){return "https://www.qcc.com/web/search?key=" + encodeURIComponent(q);}},
   {name:"爱企查", url:function(q){return "https://aiqicha.baidu.com/s?q=" + encodeURIComponent(q);}},
+  {name:"企查查", url:function(q){return "https://www.qcc.com/web/search?key=" + encodeURIComponent(q);}},
   {name:"天眼查", url:function(q){return "https://www.tianyancha.com/search?key=" + encodeURIComponent(q);}},
-  {name:"必应搜索", url:function(q){return "https://www.bing.com/search?q=" + encodeURIComponent(q + " 投诉 诈骗 骗局");}}
+  {name:"信用中国", url:function(q){return "https://public.creditchina.gov.cn/s/credit?searchtype=0&keyword=" + encodeURIComponent(q);}}
 ];
 
 // ---------- UI 逻辑 ----------
 (function(){
   var $ = function(id){ return document.getElementById(id); };
 
-  // 微信
-  if (CONFIG.wechatId && CONFIG.wechatId !== "YOUR_WECHAT_ID"){
-    $("wxLink").textContent = "💬 微信：" + CONFIG.wechatId + "（添加时备注：项目体检）";
-  } else {
-    $("wxLink").textContent = "💬 微信联系（部署时在 CONFIG 中填入微信号）";
+  // OPC 开放日报名（页脚唯一微信入口；填了微信号才显示可报名）
+  var opcCta = $("opcCta");
+  if (opcCta){
+    if (CONFIG.wechatId && CONFIG.wechatId !== "YOUR_WECHAT_ID"){
+      opcCta.textContent = "💬 加微信 " + CONFIG.wechatId + " 报名 · 锁定周五席位";
+      opcCta.href = "#"; // 微信号无法直接跳转，点击弹窗提示
+      opcCta.onclick = function(e){
+        e.preventDefault();
+        alert("请加微信：" + CONFIG.wechatId + "\n添加时备注：OPC 开放日");
+      };
+    } else {
+      opcCta.textContent = "报名方式：加微信（部署时在 CONFIG 填入微信号）";
+      opcCta.href = "#";
+    }
+  }
+
+  // 深度报告钩子（与微信同一入口；填了微信号才显示可领取）
+  var reportCta = $("reportCta");
+  if (reportCta){
+    if (CONFIG.wechatId && CONFIG.wechatId !== "YOUR_WECHAT_ID"){
+      reportCta.textContent = "💬 加微信：" + CONFIG.wechatId + "（备注：深度报告）";
+      reportCta.onclick = function(e){
+        e.preventDefault();
+        alert("请加微信：" + CONFIG.wechatId + "\n添加时备注：深度报告");
+      };
+    } else {
+      reportCta.textContent = "💬 加微信领报告（部署时填微信号）";
+    }
   }
 
   // 轻量统计（可选）
@@ -355,16 +395,54 @@ var SEARCH_SITES = [
     }).join("");
   }
 
+  // 豆包搜索：直接拉取相关投诉/风险网页（经转发代理，Key 在服务端）
+  function webSearch(q){
+    var box = $("webResults"), st = $("webStatus");
+    if (!CONFIG.proxyUrl){ box.innerHTML = ""; return; }
+    st.textContent = "搜索中…";
+    box.innerHTML = '<div class="hint"><span class="spinner"></span>正在联网搜索相关投诉与风险信息…</div>';
+    fetch(CONFIG.proxyUrl + "/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ q: q })
+    }).then(function(res){ return res.json(); }).then(function(j){
+      if (!j.ok || !j.results || !j.results.length){
+        st.textContent = "无结果";
+        box.innerHTML = '<div class="hint">联网搜索未找到相关内容（不等于没有风险），请用上方渠道继续核实。</div>';
+        return;
+      }
+      st.textContent = "找到 " + j.count + " 条";
+      box.innerHTML = j.results.map(function(x){
+        var hot = /黑猫|消费保|投诉|12315|失信|处罚|诈骗/.test(x.site + " " + x.title);
+        return '<div class="flag' + (hot ? "" : " soft") + '">' +
+          '<a href="' + x.url + '" target="_blank" rel="noopener" style="color:var(--brand);text-decoration:none;word-break:break-all"><b>' + esc(x.title) + '</b></a>' +
+          (x.site ? '<span style="font-size:12px;color:var(--muted)">　来源：' + esc(x.site) + '</span>' : "") +
+          '<div class="why">' + esc(x.snippet) + "</div></div>";
+      }).join("") +
+      '<div class="hint">以上为搜索引擎返回的公开网页结果，点标题看原文；内容真实性请自行核实。</div>';
+    }).catch(function(){
+      st.textContent = "暂不可用";
+      box.innerHTML = '<div class="hint">联网搜索服务暂时不可用，请用上方「全网核实」渠道手动查询。</div>';
+    });
+  }
+
   // 规则分析（文本 / PDF / 公司名 三者合并，全部一起分析）
   $("btnAnalyze").addEventListener("click", function(){
     var inp = allInput();
     if (!inp.text){ alert("请先粘贴内容、上传 PDF 或填写公司名。"); return; }
 
+    // 是否"只填了公司名"：话术层面没有可分析的内容
+    var onlyCompany = !!inp.company &&
+      inp.text.replace(/\s+/g, "") === inp.company.replace(/\s+/g, "");
+
     $("loading").style.display = "block";
     setTimeout(function(){
       var r = runRuleEngine(inp.text);
       r.company = inp.company || r.company;   // 手动填的公司名优先用于检索
+      r.onlyCompany = onlyCompany;
       render(r);
+      // 联网搜索：优先用公司名，否则取文本前 60 字
+      webSearch(r.company ? r.company + " 投诉" : inp.text.replace(/\s+/g, " ").slice(0, 60));
       $("loading").style.display = "none";
       $("result").classList.remove("hidden");
       $("result").scrollIntoView({behavior: "smooth"});
@@ -373,30 +451,44 @@ var SEARCH_SITES = [
 
   function render(r){
     var b = $("riskBadge");
-    b.textContent = r.level + (r.score ? "（" + r.score + " 分）" : "");
-    b.className = "badge " + r.lvClass;
-    $("scoreLine").textContent = r.company ? ("检测到公司名：" + r.company) : "未识别到公司名";
 
-    var f = $("flags");
-    f.innerHTML = "";
-    var hard = r.hits.filter(function(h){ return !h.soft; });
-    var soft = r.hits.filter(function(h){ return h.soft; });
-    hard.sort(function(a, b){ return b.weight - a.weight; });
-    soft.sort(function(a, b){ return b.weight - a.weight; });
-    hard.concat(soft).forEach(function(h){
-      var d = document.createElement("div");
-      d.className = "flag" + (h.soft ? " soft" : "");
-      d.innerHTML = "<b>" + h.name + "（+" + h.weight + "）</b>" +
-        "<span style='font-size:12px;color:var(--muted)'>命中：" +
-        h.matched.map(function(x){ return "「" + x + "」"; }).join(" ") + "</span>" +
-        "<div class='why'>" + h.why + "</div>";
-      f.appendChild(d);
-    });
-    $("noFlag").classList.toggle("hidden", r.hits.length > 0);
+    if (r.onlyCompany){
+      // 仅公司名：不讲"红旗"，直接引导去检索渠道
+      b.textContent = "待核实";
+      b.className = "badge lv-mid";
+      $("scoreLine").innerHTML = "公司名本身没有话术可分析，红线扫描不适用。" +
+        "请<b>直接点下方渠道</b>查这家公司的投诉记录、经营风险和涉诉情况。";
+      $("flags").innerHTML =
+        "<div class='flag soft'><b>下一步（1 分钟）</b>" +
+        "<div class='why'>重点看三处：① 黑猫/消费保有没有投诉；② 企查查/天眼查的经营范围里有没有「情感咨询」以外却承诺效果的类目、有无行政处罚；③ 百度搜「公司名 + 骗局」看有没有受害者发帖。" +
+        "任何一条渠道都查不到记录 ≠ 安全——新马甲公司可能刚注册不久。</div></div>";
+      $("noFlag").classList.add("hidden");
+    } else {
+      b.textContent = r.level + (r.score ? "（" + r.score + " 分）" : "");
+      b.className = "badge " + r.lvClass;
+      $("scoreLine").textContent = r.company ? ("检测到公司名：" + r.company) : "未识别到公司名";
+
+      var f = $("flags");
+      f.innerHTML = "";
+      var hard = r.hits.filter(function(h){ return !h.soft; });
+      var soft = r.hits.filter(function(h){ return h.soft; });
+      hard.sort(function(a, b){ return b.weight - a.weight; });
+      soft.sort(function(a, b){ return b.weight - a.weight; });
+      hard.concat(soft).forEach(function(h){
+        var d = document.createElement("div");
+        d.className = "flag" + (h.soft ? " soft" : "");
+        d.innerHTML = "<b>" + h.name + "（+" + h.weight + "）</b>" +
+          "<span style='font-size:12px;color:var(--muted)'>命中：" +
+          h.matched.map(function(x){ return "「" + x + "」"; }).join(" ") + "</span>" +
+          "<div class='why'>" + h.why + "</div>";
+        f.appendChild(d);
+      });
+      $("noFlag").classList.toggle("hidden", r.hits.length > 0);
+    }
 
     var q = r.company || "";
     if (q){
-      $("companyTarget").innerHTML = "针对 <b>" + q + "</b> 的公开记录：";
+      $("companyTarget").innerHTML = "针对 <b>" + q + "</b> 的公开记录（每条都在新窗口打开）：";
       $("companyHint").classList.add("hidden");
     } else {
       $("companyTarget").textContent = "";
@@ -404,59 +496,6 @@ var SEARCH_SITES = [
     }
     searchLinks(q || "创业者 防骗 招商加盟 避坑");
   }
-
-  // DeepSeek BYOK
-  var key = $("dsKey");
-  key.value = localStorage.getItem("ds_key") || "";
-  $("btnSaveKey").addEventListener("click", function(){
-    localStorage.setItem("ds_key", key.value.trim());
-    alert("Key 已保存到本机浏览器。");
-  });
-
-  $("btnAI").addEventListener("click", function(){
-    var k = key.value.trim();
-    var text = allInput().text;
-    if (!k){ alert("请先点开「设置 DeepSeek Key」填入你的 Key。"); return; }
-    if (!text){ alert("请先输入要分析的内容。"); return; }
-
-    var box = $("aiResult");
-    box.innerHTML = '<div style="color:var(--muted);font-size:14px"><span class="spinner"></span>DeepSeek 分析中…（请求由你的设备直发 DeepSeek）</div>';
-
-    var ruleOut = runRuleEngine(text);
-    var prompt = "你是一名反诈分析助手。以下是某招商/加盟/副业项目的宣传内容或合同片段，请结合公开案例常识分析。\n" +
-      "规则引擎初步命中信号：" + (ruleOut.hits.map(function(h){ return h.name; }).join("、") || "无") + "\n\n" +
-      "【待分析内容】\n" + text.slice(0, 6000) + "\n\n" +
-      "请只输出 JSON（不要 markdown 代码块），格式：" +
-      '{"summary":"两句话总结这是什么模式","risk_level":"高|中|低","red_flags":[{"point":"红旗点","why":"为什么危险"}],"contradictions":["内容中自相矛盾或与常识矛盾之处"],"questions":["签约前应逼问对方的问题"]}';
-
-    fetch("https://api.deepseek.com/chat/completions", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + k},
-      body: JSON.stringify({model: "deepseek-chat", messages: [{role: "user", content: prompt}], temperature: 0.3})
-    }).then(function(res){
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.json();
-    }).then(function(data){
-      var c = data.choices[0].message.content.replace(/```json|```/g, "").trim();
-      var j = JSON.parse(c);
-      box.innerHTML =
-        '<div style="font-size:14px"><b>模式总结：</b>' + esc(j.summary) + "</div>" +
-        '<div style="font-size:14px;margin-top:6px"><b>风险级别：</b>' + esc(j.risk_level) + "</div>" +
-        (j.red_flags || []).map(function(x){
-          return '<div class="flag"><b>' + esc(x.point) + '</b><div class="why">' + esc(x.why) + "</div></div>";
-        }).join("") +
-        ((j.contradictions && j.contradictions.length) ?
-          '<div style="font-size:14px;margin-top:8px"><b>⚠️ 矛盾点：</b><ul class="advice">' +
-          j.contradictions.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" : "") +
-        ((j.questions && j.questions.length) ?
-          '<div style="font-size:14px;margin-top:8px"><b>❓ 签约前逼问对方：</b><ul class="advice">' +
-          j.questions.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>" : "") +
-        '<div class="disclaimer">以上为 AI 生成内容，可能存在错误，不构成法律意见。</div>';
-    }).catch(function(err){
-      box.innerHTML = '<div style="font-size:14px;color:var(--red)">调用失败：' + esc(String(err)) +
-        '<br>常见原因：Key 无效 / 余额不足 / 浏览器或网络拦截了跨域请求（可换系统浏览器试试）。</div>';
-    });
-  });
 
   function esc(s){ var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 })();
